@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Arr;
 
 class AnnouncementFactory extends Factory
 {
@@ -17,10 +19,11 @@ class AnnouncementFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
+            'created_by_id' => User::factory(),
             'description' => $this->faker->text,
             'price' => $this->faker->randomFloat(2, 2, 50),
             'photo_urls' => $this->faker->randomElement([
-                $this->count(5)->faker->imageUrl()
+                ['http://www.example.com', 'http://www.example2.com', 'http://www.example3.com']
             ]),
         ];
     }

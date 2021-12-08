@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Announcement;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +13,7 @@ class StoreAnnouncementRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -23,7 +23,7 @@ class StoreAnnouncementRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => ['required', 'max:300'],
@@ -32,9 +32,9 @@ class StoreAnnouncementRequest extends FormRequest
         ];
     }
 
-    public function getInputData()
+    public function getInputData(): AnnouncementData
     {
-        return new AnnouncementRequestData(
+        return new AnnouncementData(
             $this->input('name'),
             (float) $this->input('price'),
             $this->input('description'),

@@ -3,32 +3,40 @@
 namespace App\Repository;
 
 use App\Domain\AnnouncementRepositoryInterface;
+use App\Exceptions\FailedAnnoCreateException;
+use App\Http\Requests\Announcement\AnnouncementData;
 use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class AnnouncementRepository implements AnnouncementRepositoryInterface
 {
-    public function getList(): LengthAwarePaginator
+    public function getList(string $sortBy, string $dir): LengthAwarePaginator
     {
-        return Announcement::select('id', 'name', 'description', 'price', 'photo_urls')
-            ->orderBy('price')
+        return Announcement::select('id', 'name', 'description', 'price', 'photo_urls', 'created_at')
+            ->orderBy($sortBy, $dir)
             ->paginate(10);
     }
 
-    public function getAnnouncement(int $id): Announcement
+    public function getById(int $id): Announcement
     {
-        return Announcement::select('id', 'name', 'description', 'photo_urls')->findOrFail($id);
+        return Announcement::select('id', 'name', 'description', 'price', 'photo_urls', 'created_at')->findOrFail($id);
     }
 
-    public function save(array $inputData): void
+    public function save(AnnouncementData $inputData, User $creator): Announcement
     {
-        $announcement = new Announcement();
-        $announcement->fill($inputData);
-        $announcement->save();
-    }
+        $anno = Announcement::create([
+            'name' => $inputData->getName(),
+            'description' => $inputData->getDescription(),
+            'price' => $inputData->getPrice(),
+            'photo_urls' => $inputData->getPhotos(),
+            'created_by_id' => $creator->getAttribute('id')
+        ]);
 
-    public function getStored(): Announcement
-    {
-        return Announcement::select('id', 'name', 'description', 'photo_urls')->latest()->first();
+        if (!$anno) {
+            throw new FailedAnnoCreateException('Failed to store announcement', 404);
+        }
+
+        return $anno;
     }
 }

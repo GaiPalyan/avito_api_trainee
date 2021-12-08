@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
+use App\Http\Requests\Announcement\AnnouncementData;
+use App\Http\Requests\Announcement\QueryData;
+use App\Models\Announcement;
+use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+
 class AnnouncementManager
 {
     private AnnouncementRepositoryInterface $repository;
@@ -13,46 +20,18 @@ class AnnouncementManager
         $this->repository = $repository;
     }
 
-    public function getPaginatedList(): array
+    public function getPaginatedList(QueryData $query): LengthAwarePaginator
     {
-        $list = $this->repository->getList();
-        $data = $list->getCollection()->map(function ($announcements) {
-            $mainPhoto = $this->getMainPhoto($announcements->getAttribute('photo_urls'));
-            $announcement = collect($announcements)->except('photo_urls')->toArray();
-            $announcement['photo'] = $mainPhoto;
-            return $announcement;
-        })->toArray();
-
-        $meta['page'] = $list->currentPage();
-        $meta['count'] = $list->perPage();
-        $meta['overall'] = $list->total();
-
-        return compact('data', 'meta');
+        return $this->repository->getList($query->getSortBy(), $query->getSortDir());
     }
 
-    public function getSingleAnnouncement(int $id): array
+    public function get(int $id): Announcement
     {
-        $announcement = $this->repository->getAnnouncement($id);
-        $mainPhoto = $this->getMainPhoto($announcement->getAttribute('photo_urls'));
-        $announcement = $announcement->toArray();
-        $announcement['photo'] = $mainPhoto;
-
-        return $announcement;
+        return $this->repository->getById($id);
     }
 
-    public function storeAnnouncement(array $inputData): void
+    public function store(AnnouncementData $inputData, User $creator): Announcement
     {
-        $this->repository->save($inputData);
+       return $this->repository->save($inputData, $creator);
     }
-
-    public function getStoredAnnouncement()
-    {
-        return $this->repository->getStored();
-    }
-
-    private function getMainPhoto(array $photos): string
-    {
-        return reset($photos);
-    }
-
 }
