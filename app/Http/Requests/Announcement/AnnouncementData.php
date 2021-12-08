@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Announcement;
 
-class AnnouncementRequestData
+class AnnouncementData
 {
     private string $name;
     private string $description;
@@ -49,5 +49,4 @@ class AnnouncementRequestData
     {
         return get_object_vars($this);
     }
-
 }

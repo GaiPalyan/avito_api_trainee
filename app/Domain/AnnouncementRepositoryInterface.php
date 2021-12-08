@@ -2,13 +2,14 @@
 
 namespace App\Domain;
 
+use App\Http\Requests\Announcement\AnnouncementData;
 use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface AnnouncementRepositoryInterface
 {
-    public function getList(): LengthAwarePaginator;
-    public function getAnnouncement(int $id): Announcement;
-    public function save(array $inputData): void;
-    public function getStored(): Announcement;
+    public function getList(string $sortBy, string $dir): LengthAwarePaginator;
+    public function getById(int $id): Announcement;
+    public function save(AnnouncementData $inputData, User $creator): Announcement;
 }

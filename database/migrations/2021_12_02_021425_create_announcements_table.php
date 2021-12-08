@@ -19,6 +19,7 @@ class CreateAnnouncementsTable extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 4, 2);
             $table->text('photo_urls')->nullable();
+            $table->foreignId('created_by_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
