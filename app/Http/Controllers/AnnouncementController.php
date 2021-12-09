@@ -18,7 +18,7 @@ class AnnouncementController extends Controller
     public function __construct(AnnouncementManager $manager)
     {
         $this->manager = $manager;
-        //$this->authorizeResource(Announcement::class, 'announcement');
+        $this->authorizeResource(Announcement::class, 'announcement');
     }
 
     public function index(QueryRequest $request)

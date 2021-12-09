@@ -11,12 +11,11 @@ use Illuminate\Support\Facades\Route;
  */
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'logIn']);
-Route::resource('announcements', AnnouncementController::class);
 
 /**
  * token required routs
  */
 Route::group(['middleware' => ['auth:sanctum']] , function () {
-
+    Route::resource('announcements', AnnouncementController::class);
     Route::post('logout', [AuthController::class, 'logout']);
 });
