@@ -12,6 +12,8 @@ clear:
 	php artisan view:clear
 	php artisan cache:clear
 	php artisan config:clear
+test:
+	php artisan test
 lint:
 	composer phpcs
 lint-fix:
