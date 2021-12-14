@@ -2,15 +2,15 @@
 
 namespace Tests\Unit;
 
-use App\Domain\AnnouncementManager;
+use App\Domain\PaginatorInterface;
 use App\Models\Announcement;
 use App\View\AnnouncementTransformer;
 use Illuminate\Pagination\LengthAwarePaginator;
+use PHPUnit\Framework\Constraint\TraversableContains;
 use PHPUnit\Framework\TestCase;
 
 class TransformTest extends TestCase
 {
-    private array $data;
     private Announcement $ann;
 
     protected function setUp(): void
@@ -28,23 +28,28 @@ class TransformTest extends TestCase
     }
 
     /**
-     * @param $expected
-     * @param $fields
+     * @param array $expected
+     * @param array $fields
      * @return void
      * @dataProvider singleAnnoProvider
      */
-    public function testSingleTransform($expected, $fields)
+    public function testSingleTransform(array $expected, array $fields): void
     {
         $this->assertEquals($expected, AnnouncementTransformer::transform($this->ann, $fields));
     }
 
-    /*public function testCollectionTransform()
+    public function testCollectionTransform(): void
     {
-        $stub = $this->createMock(LengthAwarePaginator::class);
-        $stub->method('list')->willReturn($this->returnSelf());
-        $stub->method('getList')->will();
-
-    }*/
+        $stub = $this->createMock(PaginatorInterface::class);
+        $stub->method('getCollection')->willReturn([
+            $this->ann
+        ]);
+        $stub->method('currentPage')->willReturn(1);
+        $stub->method('perPage')->willReturn(10);
+        $stub->method('total')->willReturn(1);
+        $result = AnnouncementTransformer::transformCollection($stub);
+        $this->assertArrayHasKey('meta', $result);
+    }
 
     /**
      * @return array
@@ -52,7 +57,7 @@ class TransformTest extends TestCase
     public function singleAnnoProvider(): array
     {
         return [
-            'with empty fields' => [
+            'empty fields' => [
                 [
                     'id' => null,
                     'name' => 'Anno',
@@ -62,7 +67,7 @@ class TransformTest extends TestCase
                 [null]
             ],
 
-            'with fields' => [
+            'fields => description & photo_urls' => [
                 [
                     'id' => null,
                     'name' => 'Anno',

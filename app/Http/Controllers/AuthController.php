@@ -23,7 +23,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): Response
     {
         $response = $this->manager->store($request->getInputData());
-        return response($response, 201);
+        return response($response->toArray(), 201);
     }
 
     public function logIn(LoginRequest $request): Response
@@ -49,7 +49,7 @@ class AuthController extends Controller
         if (auth()->check()) {
             $this->manager->terminateAccess($request->user());
         }
+
         return response()->json('Logged out');
     }
 }
-

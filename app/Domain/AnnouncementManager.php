@@ -8,11 +8,11 @@ use App\Http\Requests\Announcement\AnnouncementData;
 use App\Http\Requests\Announcement\QueryData;
 use App\Models\Announcement;
 use App\Models\User;
-use Illuminate\Pagination\LengthAwarePaginator;
-
+use App\Repository\Paginator;
 
 class AnnouncementManager
 {
+
     private AnnouncementRepositoryInterface $repository;
 
     public function __construct(AnnouncementRepositoryInterface $repository)
@@ -20,7 +20,7 @@ class AnnouncementManager
         $this->repository = $repository;
     }
 
-    public function getPaginatedList(QueryData $query): LengthAwarePaginator
+    public function getPaginatedList(QueryData $query): Paginator
     {
         return $this->repository->getList($query->getSortBy(), $query->getSortDir());
     }

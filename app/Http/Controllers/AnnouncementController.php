@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Domain\AnnouncementManager;
-use App\Exceptions\FailedAnnoCreateException;
+use App\Exceptions\FailedAnnouncementCreateException;
 use App\Http\Requests\Announcement\QueryRequest;
 use App\Http\Requests\Announcement\StoreAnnouncementRequest;
 use App\Models\Announcement;
 use App\Models\User;
 use App\View\AnnouncementTransformer;
 use Illuminate\Http\Response;
+use JetBrains\PhpStorm\ArrayShape;
 
 class AnnouncementController extends Controller
 {
@@ -21,13 +24,13 @@ class AnnouncementController extends Controller
         $this->authorizeResource(Announcement::class, 'announcement');
     }
 
-    public function index(QueryRequest $request)
+    public function index(QueryRequest $request): array
     {
         $list = $this->manager->getPaginatedList($request->getQueryRequest());
         return AnnouncementTransformer::transformCollection($list, $request->getQueryRequest()->getFields());
     }
 
-    public function store(StoreAnnouncementRequest $request, Response $response)
+    public function store(StoreAnnouncementRequest $request, Response $response): array
     {
         $creator = auth()->user();
         if (!$creator instanceof User) {
@@ -35,18 +38,18 @@ class AnnouncementController extends Controller
         }
 
         try {
-             $anno = $this->manager->store($request->getInputData(), $creator);
-        } catch (FailedAnnoCreateException $exception) {
+            $announcement = $this->manager->store($request->getInputData(), $creator);
+        } catch (FailedAnnouncementCreateException $exception) {
              return $exception->getCode();
         }
 
         $code = $response->getStatusCode();
-        return compact('anno', 'code');
+        return compact('announcement', 'code');
     }
 
-    public function show(Announcement $announcement, QueryRequest $request)
+    public function show(Announcement $announcement, QueryRequest $request): array
     {
-        $anno = $this->manager->get($announcement->getAttribute('id'));
-        return AnnouncementTransformer::transform($anno, $request->getQueryRequest()->getFields());
+        $announcement = $this->manager->get($announcement->getAttribute('id'));
+        return AnnouncementTransformer::transform($announcement, $request->getQueryRequest()->getFields());
     }
 }

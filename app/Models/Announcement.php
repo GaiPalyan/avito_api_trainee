@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Announcement extends Model
 {
@@ -17,12 +18,12 @@ class Announcement extends Model
         'photo_urls' => 'array'
     ];
 
-    public function creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
     }
 
-    public function getMainPhoto()
+    public function getMainPhoto(): string
     {
         $photos = $this->getAttribute('photo_urls');
         return reset($photos);

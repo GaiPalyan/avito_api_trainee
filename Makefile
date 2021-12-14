@@ -14,6 +14,8 @@ clear:
 	php artisan config:clear
 test:
 	php artisan test
+analyse:
+	composer phpstan
 lint:
 	composer phpcs
 lint-fix:

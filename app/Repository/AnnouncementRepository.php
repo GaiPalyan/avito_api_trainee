@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Domain\AnnouncementRepositoryInterface;
-use App\Exceptions\FailedAnnoCreateException;
+use App\Exceptions\FailedAnnouncementCreateException;
 use App\Http\Requests\Announcement\AnnouncementData;
 use App\Models\Announcement;
 use App\Models\User;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class AnnouncementRepository implements AnnouncementRepositoryInterface
 {
-    public function getList(string $sortBy, string $dir): LengthAwarePaginator
+    public function getList(string $sortBy, string $dir): Paginator
     {
-        return Announcement::select('id', 'name', 'description', 'price', 'photo_urls', 'created_at')
+        $basePaginator = Announcement::select('id', 'name', 'description', 'price', 'photo_urls', 'created_at')
             ->orderBy($sortBy, $dir)
             ->paginate(10);
+
+        return new Paginator($basePaginator);
     }
 
     public function getById(int $id): Announcement
@@ -25,7 +28,7 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
 
     public function save(AnnouncementData $inputData, User $creator): Announcement
     {
-        $anno = Announcement::create([
+        $announcement = Announcement::create([
             'name' => $inputData->getName(),
             'description' => $inputData->getDescription(),
             'price' => $inputData->getPrice(),
@@ -33,10 +36,10 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
             'created_by_id' => $creator->getAttribute('id')
         ]);
 
-        if (!$anno) {
-            throw new FailedAnnoCreateException('Failed to store announcement', 404);
+        if (!$announcement) {
+            throw new FailedAnnouncementCreateException('Failed to store announcement', 404);
         }
 
-        return $anno;
+        return $announcement;
     }
 }

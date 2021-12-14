@@ -1,0 +1,11 @@
+parameters:
+	level: 6
+	checkMissingIterableValueType: false
+	paths:
+		- app
+		- tests
+	excludePaths:
+		- app/Http/Middleware
+	ignoreErrors:
+		- '#Call to an undefined static method App\\Models\\[\w]+::[\w]+\(\)#'
+		- '#Access to an undefined property App\\Models\\[\w]+::\$[\w]+#'
