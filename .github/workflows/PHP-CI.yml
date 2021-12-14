@@ -16,10 +16,6 @@ jobs:
           php-version: '8.0'
           tools: phpmd
 
-        #Install
-      - name: Install
-        run: make install
-
         #Run set-up
       - name: set up project
         run: make setup
