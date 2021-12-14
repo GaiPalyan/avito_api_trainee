@@ -30,4 +30,4 @@ jobs:
 
         # Run analyser
       - name: Run phpstan analyse
-        run: make analyase
+        run: make analyse
