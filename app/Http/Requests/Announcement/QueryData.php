@@ -6,13 +6,14 @@ namespace App\Http\Requests\Announcement;
 
 class QueryData
 {
+
     private ?array $fields;
     private string $sortBy;
     private string $sortDir;
 
     public function __construct(string $sortBy, string $sortDir, ?string $fields)
     {
-        $this->fields = $fields ? explode(',', $fields) : $fields;
+        $this->fields = $fields ? explode(',', $fields) : [];
         $this->sortBy = $sortBy;
         $this->sortDir = $sortDir;
     }

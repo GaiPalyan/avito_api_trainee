@@ -10,14 +10,14 @@ class QueryRequest extends FormRequest
 {
     public $query;
 
-    public function rules()
+    public function rules(): array
     {
         return [
 
         ];
     }
 
-    public function getQueryRequest()
+    public function getQueryRequest(): QueryData
     {
         return new QueryData(
             $this->query('sort') ?? 'id',

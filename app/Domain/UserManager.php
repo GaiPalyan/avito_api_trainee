@@ -16,7 +16,7 @@ class UserManager
         $this->repository = $repository;
     }
 
-    public function store(RegisterData $authData): array
+    public function store(RegisterData $authData): User
     {
         return $this->repository->save($authData);
     }
@@ -33,6 +33,6 @@ class UserManager
 
     public function terminateAccess(User $user): void
     {
-        $this->repository->deleteToken($user);
+        $this->repository->deleteTokens($user);
     }
 }

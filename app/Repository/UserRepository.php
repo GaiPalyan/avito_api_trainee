@@ -10,16 +10,13 @@ use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function save(RegisterData $authData): array
+    public function save(RegisterData $authData): User
     {
-        $user = User::create([
+        return User::create([
             'name' => $authData->getName(),
             'email' => $authData->getEmail(),
             'password' => $authData->getHash(),
         ]);
-        $token = $this->saveToken($user);
-
-        return compact('user', 'token');
     }
 
     public function saveToken(User $user): string
@@ -32,7 +29,7 @@ class UserRepository implements UserRepositoryInterface
         return User::where('email', $email)->first();
     }
 
-    public function deleteToken(User $user): void
+    public function deleteTokens(User $user): void
     {
         $user->tokens()->delete();
     }

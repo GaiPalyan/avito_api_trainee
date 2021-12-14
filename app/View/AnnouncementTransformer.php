@@ -4,34 +4,43 @@ declare(strict_types=1);
 
 namespace App\View;
 
+use App\Domain\PaginatorInterface;
 use App\Models\Announcement;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class AnnouncementTransformer
 {
-    public static function transform(Announcement $ann, array $fields = null): array
+    public static function transform(Announcement $announcement, array $fields = []): array
     {
         $data = [
-            'id' => $ann->getAttribute('id'),
-            'name' => $ann->getAttribute('name'),
-            'price' => $ann->getAttribute('price'),
-            'photo' => $ann->getMainPhoto(),
+            'id' => $announcement->getAttribute('id'),
+            'name' => $announcement->getAttribute('name'),
+            'price' => $announcement->getAttribute('price'),
+            'photo' => $announcement->getMainPhoto(),
         ];
 
-        if ($fields) {
-            array_map(static function($fieldValue, $fieldName) use (&$data, $fields) {
-               if (in_array($fieldName, $fields, true)) {
-                   $data[$fieldName] = $fieldValue;
-               }
-            }, $ann->toArray(), array_keys($ann->toArray()));
-        }
+        $filled = self::additionFields($announcement, $fields);
+        return array_merge($data, $filled);
+    }
+
+    private static function additionFields(Announcement $announcement, array $fields = []): array
+    {
+        $data = [];
+        array_map(static function($fieldValue, $fieldName) use (&$data, $fields) {
+            if (in_array($fieldName, $fields, true)) {
+                $data[$fieldName] = $fieldValue;
+            }
+        }, $announcement->toArray(), array_keys($announcement->toArray()));
 
         return $data;
     }
 
-    public static function transformCollection(LengthAwarePaginator $list, array $fields = null): array
+    public static function transformCollection(PaginatorInterface $list, array $fields = []): array
     {
-        $collection = $list->getCollection()->map(fn($ann) => self::transform($ann, $fields));
+        $collection = [];
+        foreach ($list->getCollection() as $announcement) {
+            $collection[] = self::transform($announcement, $fields);
+        }
+
         $meta['page'] = $list->currentPage();
         $meta['count'] = $list->perPage();
         $meta['overall'] = $list->total();

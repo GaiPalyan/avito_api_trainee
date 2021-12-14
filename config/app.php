@@ -169,6 +169,7 @@ return [
         /*
          * Application Service Providers...
          */
+        \App\Providers\PaginatorServiceProvider::class,
         \App\Providers\UserRepositoryProvider::class,
         App\Providers\AnnouncementRepositoryServiceProvider::class,
         App\Providers\AppServiceProvider::class,

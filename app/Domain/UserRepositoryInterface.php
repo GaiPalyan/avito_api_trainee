@@ -9,8 +9,8 @@ use App\Models\User;
 
 interface UserRepositoryInterface
 {
-    public function save(RegisterData $authData): array;
+    public function save(RegisterData $authData): User;
     public function getUserByEmail(string $email): ?User;
     public function saveToken(User $user): string;
-    public function deleteToken(User $user): void;
+    public function deleteTokens(User $user): void;
 }
